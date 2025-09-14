@@ -9,6 +9,25 @@ interface FeaturedCollectionsProps {
 }
 
 export default function FeaturedCollections({ className = '' }: FeaturedCollectionsProps) {
+  console.log('FeaturedCollections - featuredBlocks:', featuredBlocks);
+  
+  // Fallback to prevent runtime errors
+  const blocks = featuredBlocks || [];
+  
+  // Additional safety check - ensure we have valid blocks
+  if (blocks.length === 0) {
+    console.warn('FeaturedCollections: No blocks available');
+    return (
+      <section className={`relative w-full py-16 sm:py-20 lg:py-24 overflow-x-hidden ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-gray-500">
+            <p>Featured collections coming soon...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+  
   return (
     <section className={`relative w-full py-16 sm:py-20 lg:py-24 overflow-x-hidden ${className}`}>
       {/* Subtle Background Panel */}
@@ -43,7 +62,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
         <div className="space-y-6 sm:space-y-8">
           {/* Mobile: Stack all blocks vertically */}
           <div className="block sm:hidden space-y-6">
-            {featuredBlocks.map((block, index) => (
+            {blocks.map((block, index) => (
               <div
                 key={block.id}
                 style={{ 
@@ -66,7 +85,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
                 animation: 'slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
               }}
             >
-              <FeaturedBlock block={featuredBlocks[0]} />
+              <FeaturedBlock block={blocks[0]} />
             </div>
 
             {/* Medium Block */}
@@ -77,7 +96,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
                 animation: 'slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
               }}
             >
-              <FeaturedBlock block={featuredBlocks[1]} />
+              <FeaturedBlock block={blocks[1]} />
             </div>
 
             {/* Medium Block */}
@@ -88,7 +107,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
                 animation: 'slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
               }}
             >
-              <FeaturedBlock block={featuredBlocks[2]} />
+              <FeaturedBlock block={blocks[2]} />
             </div>
 
             {/* Small Blocks */}
@@ -99,7 +118,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
                 animation: 'slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
               }}
             >
-              <FeaturedBlock block={featuredBlocks[3]} />
+              <FeaturedBlock block={blocks[3]} />
             </div>
 
             <div 
@@ -109,7 +128,7 @@ export default function FeaturedCollections({ className = '' }: FeaturedCollecti
                 animation: 'slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards'
               }}
             >
-              <FeaturedBlock block={featuredBlocks[4]} />
+              <FeaturedBlock block={blocks[4]} />
             </div>
           </div>
         </div>

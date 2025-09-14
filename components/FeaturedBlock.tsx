@@ -22,20 +22,38 @@ const titleSizes = {
 };
 
 export default function FeaturedBlock({ block, className = '' }: FeaturedBlockProps) {
+  // Safety checks to prevent runtime errors
+  if (!block) {
+    console.warn('FeaturedBlock: No block data provided');
+    return (
+      <div className={`bg-gray-100 rounded-2xl p-8 text-center text-gray-500 ${className}`}>
+        <p>Content unavailable</p>
+      </div>
+    );
+  }
+
+  const cta = block.cta || { text: 'Learn More', href: '#' };
+  const ariaLabel = block.ariaLabel || `View ${block.title || 'collection'}`;
+  const title = block.title || 'Untitled';
+  const subtitle = block.subtitle || '';
+  const description = block.description || '';
+  const image = block.image || '';
+  const category = block.category || 'Collection';
+
   return (
     <Link
-      href={block.cta.href}
+      href={cta.href}
       className={`group relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A14A] focus-visible:ring-offset-4 focus-visible:ring-offset-white rounded-2xl overflow-hidden ${className}`}
       role="link"
-      aria-label={block.ariaLabel}
+      aria-label={ariaLabel}
     >
-      <div className={`relative bg-[#F7F3EE] rounded-2xl border border-[#1E1E1E]/10 shadow-sm hover:shadow-lg focus-within:shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-within:translate-y-0 ${layoutClasses[block.layout]}`}>
+        <div className={`relative bg-[#F7F3EE] rounded-2xl border border-[#1E1E1E]/10 shadow-sm hover:shadow-lg focus-within:shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:focus-within:translate-y-0 ${layoutClasses[block.layout || 'medium']}`}>
         
         {/* Background Image */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl">
           <img
-            src={block.image}
-            alt={block.title}
+            src={image}
+            alt={title}
             className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02] group-focus-within:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-focus-within:scale-100"
           />
           
@@ -52,30 +70,30 @@ export default function FeaturedBlock({ block, className = '' }: FeaturedBlockPr
             
             {/* Category Badge */}
             <div className="inline-block px-3 py-1.5 sm:px-4 bg-white/90 backdrop-blur-sm border border-white/40 rounded-full mb-2 sm:mb-3 shadow-lg">
-              <span className="text-xs font-semibold text-[#4A2E2A]">{block.category}</span>
+              <span className="text-xs font-semibold text-[#4A2E2A]">{category}</span>
             </div>
             
             {/* Title with Gold Underline Animation */}
-            <h3 className={`relative ${titleSizes[block.layout]} font-serif font-bold text-white mb-1 sm:mb-2 group-hover:text-[#F7F3EE] transition-colors duration-300 leading-tight`}>
-              {block.title}
+            <h3 className={`relative ${titleSizes[block.layout || 'medium']} font-serif font-bold text-white mb-1 sm:mb-2 group-hover:text-[#F7F3EE] transition-colors duration-300 leading-tight`}>
+              {title}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C9A14A] transition-all duration-300 ease-out group-hover:w-full"></span>
             </h3>
             
-            {/* Copy */}
-            <p className="text-xs sm:text-sm lg:text-base text-white/90 mb-1 sm:mb-2 group-hover:text-white/100 transition-colors duration-300 leading-relaxed line-clamp-2">
-              {block.copy}
-            </p>
-            
-            {/* Optional Subcopy */}
-            {block.subcopy && (
-              <p className="text-xs text-white/80 mb-2 sm:mb-3 group-hover:text-white/90 transition-colors duration-300">
-                {block.subcopy}
+            {/* Subtitle */}
+            {subtitle && (
+              <p className="text-xs sm:text-sm text-white/80 mb-2 group-hover:text-white/90 transition-colors duration-300">
+                {subtitle}
               </p>
             )}
             
+            {/* Description */}
+            <p className="text-xs sm:text-sm lg:text-base text-white/90 mb-1 sm:mb-2 group-hover:text-white/100 transition-colors duration-300 leading-relaxed line-clamp-2">
+              {description}
+            </p>
+            
             {/* CTA Button */}
             <div className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-2 lg:px-4 bg-[#C9A14A] text-white font-semibold rounded-lg shadow-lg group-hover:bg-[#E8DFD6] group-hover:text-[#4A2E2A] transition-all duration-300 ease-out text-xs sm:text-sm lg:text-base">
-              <span className="mr-1 sm:mr-2">{block.cta.text}</span>
+              <span className="mr-1 sm:mr-2">{cta.text}</span>
               <svg 
                 className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" 
                 fill="none" 

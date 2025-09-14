@@ -2,6 +2,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import Hero from "../components/Hero";
 import CategoryTiles from "../components/CategoryTiles";
+import FeaturedAndRecommended from "../components/home/FeaturedAndRecommended";
 import FeaturedCollections from "../components/FeaturedCollections";
 import OccasionsStrip from "../components/OccasionsStrip";
 
@@ -17,6 +18,9 @@ export default function Home() {
         
         {/* Category Tiles Section */}
         <CategoryTiles />
+        
+        {/* Featured & Recommended Section */}
+        <FeaturedAndRecommended />
         
         {/* Occasions Strip Section */}
         <OccasionsStrip />
