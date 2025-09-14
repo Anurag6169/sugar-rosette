@@ -11,7 +11,7 @@ export interface NavigationConfig {
 
 export const navigationConfig: NavigationConfig = {
   mainLinks: [
-    { name: 'Home', href: '/' },
+    { name: 'Menu', href: '/menu' },
     { name: 'Products', href: '/products' },
     { name: 'Chocolates', href: '/chocolates' },
     { name: 'Hampers', href: '/hampers' },
