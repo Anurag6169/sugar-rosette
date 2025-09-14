@@ -18,6 +18,10 @@ export default function Navbar({ className = '' }: NavbarProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(null);
+  const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [subHoverTimeout, setSubHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const pathname = usePathname() || '';
 
   // Mock cart item count
@@ -32,6 +36,18 @@ export default function Navbar({ className = '' }: NavbarProps) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) {
+        clearTimeout(hoverTimeout);
+      }
+      if (subHoverTimeout) {
+        clearTimeout(subHoverTimeout);
+      }
+    };
+  }, [hoverTimeout, subHoverTimeout]);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -55,6 +71,67 @@ export default function Navbar({ className = '' }: NavbarProps) {
 
   const closeCart = () => {
     setIsCartOpen(false);
+  };
+
+  // Handle dropdown hover with delay
+  const handleMouseEnter = (itemName: string) => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+    setActiveDropdown(itemName);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150); // 150ms delay before closing
+    setHoverTimeout(timeout);
+  };
+
+  const handleDropdownMouseEnter = () => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      setHoverTimeout(null);
+    }
+  };
+
+  const handleDropdownMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+      setActiveSubDropdown(null);
+    }, 150);
+    setHoverTimeout(timeout);
+  };
+
+  // Handle sub-dropdown hover
+  const handleSubMouseEnter = (subItemName: string) => {
+    if (subHoverTimeout) {
+      clearTimeout(subHoverTimeout);
+      setSubHoverTimeout(null);
+    }
+    setActiveSubDropdown(subItemName);
+  };
+
+  const handleSubMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveSubDropdown(null);
+    }, 150);
+    setSubHoverTimeout(timeout);
+  };
+
+  const handleSubDropdownMouseEnter = () => {
+    if (subHoverTimeout) {
+      clearTimeout(subHoverTimeout);
+      setSubHoverTimeout(null);
+    }
+  };
+
+  const handleSubDropdownMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveSubDropdown(null);
+    }, 150);
+    setSubHoverTimeout(timeout);
   };
 
   return (
@@ -97,33 +174,110 @@ export default function Navbar({ className = '' }: NavbarProps) {
               <div className="flex items-center space-x-1">
                 {navigationConfig.mainLinks.map((item) => {
                   const isActive = isActiveLink(item.href, pathname);
+                  const hasChildren = item.children && item.children.length > 0;
+                  
                   return (
-                    <Link
+                    <div
                       key={item.name}
-                      href={item.href}
-                      className={`group relative px-4 py-2.5 text-sm font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 rounded-xl ${
-                        isActive
-                          ? 'text-[#4A2E2A]'
-                          : 'text-gray-700 hover:text-[#4A2E2A]'
-                      }`}
+                      className="relative group"
+                      onMouseEnter={() => hasChildren && handleMouseEnter(item.name)}
+                      onMouseLeave={() => hasChildren && handleMouseLeave()}
                     >
-                      <span className="relative z-10">{item.name}</span>
-                      
-                      {/* Hover background effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      
-                      {/* Animated gold underline */}
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
-                        <div className={`h-0.5 bg-gradient-to-r from-[#C9A14A] to-[#E8DFD6] rounded-full shadow-sm shadow-[#C9A14A]/40 transition-all duration-300 ease-out ${
-                          isActive ? 'w-12 opacity-100' : 'w-0 opacity-0 group-hover:w-8 group-hover:opacity-100'
-                        } motion-reduce:transition-none`}></div>
-                      </div>
-                      
-                      {/* Shine effect on hover */}
-                      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                      </div>
-                    </Link>
+                      <Link
+                        href={item.href}
+                        className={`group relative px-4 py-2.5 text-sm font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 rounded-xl ${
+                          isActive
+                            ? 'text-[#4A2E2A]'
+                            : 'text-gray-700 hover:text-[#4A2E2A]'
+                        }`}
+                      >
+                        <span className="relative z-10">{item.name}</span>
+                        
+                        {/* Hover background effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        {/* Animated gold underline */}
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
+                          <div className={`h-0.5 bg-gradient-to-r from-[#C9A14A] to-[#E8DFD6] rounded-full shadow-sm shadow-[#C9A14A]/40 transition-all duration-300 ease-out ${
+                            isActive ? 'w-12 opacity-100' : 'w-0 opacity-0 group-hover:w-8 group-hover:opacity-100'
+                          } motion-reduce:transition-none`}></div>
+                        </div>
+                        
+                        {/* Shine effect on hover */}
+                        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                        </div>
+                      </Link>
+
+                      {/* Dropdown Menu */}
+                      {hasChildren && activeDropdown === item.name && (
+                        <div 
+                          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-xl shadow-xl shadow-[#4A2E2A]/10 border border-[#C9A14A]/15 z-50"
+                          onMouseEnter={handleDropdownMouseEnter}
+                          onMouseLeave={handleDropdownMouseLeave}
+                        >
+                          <div className="p-3">
+                            <div className="grid grid-cols-1 gap-1">
+                              {item.children!.map((child) => {
+                                const hasSubChildren = child.children && child.children.length > 0;
+                                const isSubActive = activeSubDropdown === child.name;
+                                
+                                return (
+                                  <div 
+                                    key={child.name} 
+                                    className="relative group"
+                                    onMouseEnter={() => hasSubChildren && handleSubMouseEnter(child.name)}
+                                    onMouseLeave={() => hasSubChildren && handleSubMouseLeave()}
+                                  >
+                                    {hasSubChildren ? (
+                                      <div className="relative">
+                                        <Link
+                                          href={child.href}
+                                          className="block px-4 py-3 text-sm font-medium text-[#4A2E2A] hover:text-[#C9A14A] hover:bg-[#F7F3EE]/50 rounded-lg transition-colors duration-200 flex items-center justify-between"
+                                        >
+                                          <span>{child.name}</span>
+                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                          </svg>
+                                        </Link>
+                                        
+                                        {/* Sub-submenu */}
+                                        {isSubActive && (
+                                          <div 
+                                            className="absolute left-full top-0 ml-2 w-56 bg-white/95 backdrop-blur-xl rounded-xl shadow-xl shadow-[#4A2E2A]/10 border border-[#C9A14A]/15 z-50"
+                                            onMouseEnter={handleSubDropdownMouseEnter}
+                                            onMouseLeave={handleSubDropdownMouseLeave}
+                                          >
+                                            <div className="p-2">
+                                              {child.children!.map((subChild) => (
+                                                <Link
+                                                  key={subChild.name}
+                                                  href={subChild.href}
+                                                  className="block px-3 py-2 text-sm text-gray-700 hover:text-[#C9A14A] hover:bg-[#F7F3EE]/50 rounded-lg transition-colors duration-200"
+                                                >
+                                                  {subChild.name}
+                                                </Link>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <Link
+                                        href={child.href}
+                                        className="block px-4 py-3 text-sm text-gray-700 hover:text-[#C9A14A] hover:bg-[#F7F3EE]/50 rounded-lg transition-colors duration-200"
+                                      >
+                                        {child.name}
+                                      </Link>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>

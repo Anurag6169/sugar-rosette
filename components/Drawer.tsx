@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -16,6 +16,7 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
   const pathname = usePathname();
   const containerRef = useFocusTrap({ active: isOpen });
   useScrollLock(isOpen);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   // Handle aria-hidden for main content
   useEffect(() => {
@@ -58,6 +59,18 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
     // In a real app, this would open WhatsApp
     const message = encodeURIComponent('Hi! I\'d like to know more about Sugar Rosette products.');
     window.open(`https://wa.me/918001202278?text=${message}`, '_blank');
+  };
+
+  const toggleExpanded = (itemName: string) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemName)) {
+        newSet.delete(itemName);
+      } else {
+        newSet.add(itemName);
+      }
+      return newSet;
+    });
   };
 
   useEffect(() => {
@@ -108,29 +121,167 @@ export default function Drawer({ isOpen, onClose }: DrawerProps) {
           <div className="space-y-1">
             {navigationConfig.mainLinks.map((item, index) => {
               const isActive = isActiveLink(item.href, pathname);
+              const hasChildren = item.children && item.children.length > 0;
+              const isExpanded = expandedItems.has(item.name);
               
               return (
                 <div key={item.name}>
-                  <Link
-                    href={item.href}
-                    className={`group block px-5 py-5 rounded-2xl text-base font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[56px] flex items-center ${
-                      isActive
-                        ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-lg shadow-[#C9A14A]/20'
-                        : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-md'
-                    }`}
-                    onClick={onClose}
-                    style={{ 
-                      animationDelay: `${index * 60}ms`,
-                      animation: isOpen ? 'slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
-                    }}
-                  >
-                    <span className="relative z-10">{item.name}</span>
-                    
-                    {/* Shine effect */}
-                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                  {hasChildren ? (
+                    <div>
+                      <button
+                        onClick={() => toggleExpanded(item.name)}
+                        className={`group w-full px-5 py-5 rounded-2xl text-base font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[56px] flex items-center justify-between ${
+                          isActive
+                            ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-lg shadow-[#C9A14A]/20'
+                            : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-md'
+                        }`}
+                        style={{ 
+                          animationDelay: `${index * 60}ms`,
+                          animation: isOpen ? 'slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
+                        }}
+                        aria-expanded={isExpanded}
+                        aria-haspopup="true"
+                      >
+                        <span className="relative z-10">{item.name}</span>
+                        <svg 
+                          className={`w-5 h-5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        
+                        {/* Shine effect */}
+                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                        </div>
+                      </button>
+                      
+                      {/* Submenu */}
+                      {isExpanded && (
+                        <div className="ml-4 mt-2 space-y-1">
+                          {item.children!.map((child, childIndex) => {
+                            const isChildActive = isActiveLink(child.href, pathname);
+                            const hasSubChildren = child.children && child.children.length > 0;
+                            const isSubExpanded = expandedItems.has(`${item.name}-${child.name}`);
+                            
+                            return (
+                              <div key={child.name}>
+                                {hasSubChildren ? (
+                                  <div>
+                                    <button
+                                      onClick={() => toggleExpanded(`${item.name}-${child.name}`)}
+                                      className={`group w-full px-5 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[48px] flex items-center justify-between ${
+                                        isChildActive
+                                          ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-md shadow-[#C9A14A]/20'
+                                          : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-sm'
+                                      }`}
+                                      style={{ 
+                                        animationDelay: `${(index * 60) + (childIndex * 40)}ms`,
+                                        animation: isOpen ? 'slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
+                                      }}
+                                      aria-expanded={isSubExpanded}
+                                      aria-haspopup="true"
+                                    >
+                                      <span className="relative z-10">{child.name}</span>
+                                      <svg 
+                                        className={`w-4 h-4 transition-transform duration-200 ${isSubExpanded ? 'rotate-180' : ''}`} 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                      </svg>
+                                      
+                                      {/* Shine effect */}
+                                      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                                      </div>
+                                    </button>
+                                    
+                                    {/* Sub-submenu */}
+                                    {isSubExpanded && (
+                                      <div className="ml-4 mt-1 space-y-1">
+                                        {child.children!.map((subChild, subChildIndex) => {
+                                          const isSubChildActive = isActiveLink(subChild.href, pathname);
+                                          return (
+                                            <Link
+                                              key={subChild.name}
+                                              href={subChild.href}
+                                              className={`group block px-5 py-2 rounded-lg text-xs font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[40px] flex items-center ${
+                                                isSubChildActive
+                                                  ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-sm shadow-[#C9A14A]/20'
+                                                  : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-sm'
+                                              }`}
+                                              onClick={onClose}
+                                              style={{ 
+                                                animationDelay: `${(index * 60) + (childIndex * 40) + (subChildIndex * 20)}ms`,
+                                                animation: isOpen ? 'slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
+                                              }}
+                                            >
+                                              <span className="relative z-10">{subChild.name}</span>
+                                              
+                                              {/* Shine effect */}
+                                              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                                              </div>
+                                            </Link>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <Link
+                                    href={child.href}
+                                    className={`group block px-5 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[48px] flex items-center ${
+                                      isChildActive
+                                        ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-md shadow-[#C9A14A]/20'
+                                        : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-sm'
+                                    }`}
+                                    onClick={onClose}
+                                    style={{ 
+                                      animationDelay: `${(index * 60) + (childIndex * 40)}ms`,
+                                      animation: isOpen ? 'slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
+                                    }}
+                                  >
+                                    <span className="relative z-10">{child.name}</span>
+                                    
+                                    {/* Shine effect */}
+                                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                                    </div>
+                                  </Link>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  </Link>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`group block px-5 py-5 rounded-2xl text-base font-medium transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#C9A14A] focus:ring-offset-2 min-h-[56px] flex items-center ${
+                        isActive
+                          ? 'text-[#4A2E2A] bg-gradient-to-r from-[#F7F3EE] to-[#E8DFD6] border-l-4 border-[#C9A14A] shadow-lg shadow-[#C9A14A]/20'
+                          : 'text-[#4A2E2A] hover:bg-gradient-to-r hover:from-[#F7F3EE] hover:to-[#E8DFD6] hover:shadow-md'
+                      }`}
+                      onClick={onClose}
+                      style={{ 
+                        animationDelay: `${index * 60}ms`,
+                        animation: isOpen ? 'slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards' : 'none'
+                      }}
+                    >
+                      <span className="relative z-10">{item.name}</span>
+                      
+                      {/* Shine effect */}
+                      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                      </div>
+                    </Link>
+                  )}
                   
                   {/* Elegant separator */}
                   {index < navigationConfig.mainLinks.length - 1 && (
