@@ -10,20 +10,21 @@ export default function Home() {
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-[#F7F3EE] via-white to-[#E8DFD6]">
       <Navbar />
       
-      {/* Hero Section */}
-      <Hero />
-      
-      {/* Category Tiles Section */}
-      <CategoryTiles />
-      
-      {/* Occasions Strip Section */}
-      <OccasionsStrip />
-      
-      {/* Featured Collections Section */}
-      <FeaturedCollections />
-      
-      {/* Additional content sections */}
-      <main className="pt-20 lg:pt-24">
+      {/* Main Content */}
+      <main role="main">
+        {/* Hero Section */}
+        <Hero />
+        
+        {/* Category Tiles Section */}
+        <CategoryTiles />
+        
+        {/* Occasions Strip Section */}
+        <OccasionsStrip />
+        
+        {/* Featured Collections Section */}
+        <FeaturedCollections />
+        
+        {/* Coming Soon Section */}
         <section className="py-20 px-4 w-full">
           <div className="max-w-6xl mx-auto text-center w-full">
             <h2 className="text-4xl font-serif font-bold text-[#4A2E2A] mb-8">
@@ -33,10 +34,10 @@ export default function Home() {
               We're crafting something special for you. Stay tuned for our premium collection launch.
             </p>
           </div>
-                </section>
-              </main>
-              
-              <Footer />
-            </div>
-          );
-        }
+        </section>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+}

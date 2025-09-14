@@ -55,11 +55,14 @@ function CategoryCard({ category, className = '', occasion }: CategoryCardProps)
 // Main CategoryTiles component
 export default function CategoryTiles({ className = '', occasion }: CategoryTilesProps) {
   return (
-    <section className={`w-full py-12 sm:py-16 lg:py-20 overflow-x-hidden ${className}`}>
+    <section 
+      className={`w-full py-12 sm:py-16 lg:py-20 overflow-x-hidden ${className}`}
+      aria-labelledby="category-heading"
+    >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#4A2E2A] mb-4">
+          <h2 id="category-heading" className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#4A2E2A] mb-4">
             Our Collections
           </h2>
           <p className="text-lg sm:text-xl text-[#4A2E2A]/80 max-w-2xl mx-auto leading-relaxed">

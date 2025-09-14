@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import Navbar from "../../components/layout/Navbar";
 import { sampleProducts } from "../../data/products";
 import SimilarProducts from "../../components/SimilarProducts";
+import RecentlyViewed from "../../components/RecentlyViewed";
+import PeopleAlsoViewed from "../../components/PeopleAlsoViewed";
 
 export default function ProductDetail() {
   const router = useRouter();
@@ -332,11 +334,17 @@ export default function ProductDetail() {
         </div>
       </section>
 
-      {/* Similar Products Section */}
-      <SimilarProducts 
-        currentProduct={product} 
-        allProducts={sampleProducts} 
-      />
+        {/* Similar Products Section */}
+        <SimilarProducts 
+          currentProduct={product} 
+          allProducts={sampleProducts} 
+        />
+        
+        {/* Recently Viewed Section */}
+        <RecentlyViewed currentProductId={product.id} />
+        
+        {/* People Also Viewed Section */}
+        <PeopleAlsoViewed currentProduct={product} />
     </div>
   );
 }

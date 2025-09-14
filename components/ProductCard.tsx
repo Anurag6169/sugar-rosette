@@ -51,13 +51,16 @@ export default function ProductCard({
           {!imageError ? (
             <Image
               src={product.imageUrl}
-              alt={product.name}
+              alt={`${product.name} - ${product.categoryOrBrand} ${product.currentPrice ? `priced at ₹${product.currentPrice}` : ''}`}
               fill
               className={`object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05] group-focus-within:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-focus-within:scale-100 ${isDisabled ? 'opacity-80' : ''}`}
               onError={handleImageError}
               onLoad={handleImageLoad}
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               unoptimized={true}
+              loading="lazy"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-[#E8DFD6] to-[#F7F3EE] flex items-center justify-center">

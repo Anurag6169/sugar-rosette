@@ -75,12 +75,24 @@ export default function OccasionsStrip({ className = '' }: OccasionsStripProps) 
   const handleOccasionClick = (occasionId: string) => {
     setActiveOccasion(occasionId);
     
-    // Create new URL with occasion query parameter
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set('occasion', occasionId);
+    // Map occasions to specific pages
+    const occasionPages: { [key: string]: string } = {
+      'birthday': '/collections/birthday',
+      'anniversary': '/collections/anniversary',
+      'festive': '/collections?occasion=festive',
+      'corporate': '/corporate-gifting',
+      'weddings': '/collections?occasion=weddings'
+    };
     
-    // Navigate to collections page with occasion parameter
-    router.push(`/collections?${current.toString()}`);
+    const page = occasionPages[occasionId];
+    if (page) {
+      router.push(page);
+    } else {
+      // Fallback to generic collections page with occasion filter
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set('occasion', occasionId);
+      router.push(`/collections?${current.toString()}`);
+    }
   };
 
   // Handle clear selection

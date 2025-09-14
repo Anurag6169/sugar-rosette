@@ -26,11 +26,11 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    title: 'Handmade Artisan Confections',
-    subtitle: 'Luxury chocolates, cakes, and hampers',
-    description: 'Crafted with passion, delivered with love.',
-    primaryCta: { text: 'Explore Collections', href: '/collections' },
-    secondaryCta: { text: 'Corporate Gifting', href: '/corporate-gifting' },
+    title: 'Handmade Artisan Chocolates',
+    subtitle: 'Premium Belgian chocolates crafted with passion',
+    description: 'Experience the finest ingredients from around the world.',
+    primaryCta: { text: 'Shop Chocolates', href: '/chocolates' },
+    secondaryCta: { text: 'View Collections', href: '/collections' },
     backgroundImage: `url('data:image/svg+xml;base64,${btoa(`
       <svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -53,11 +53,11 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    title: 'Premium Chocolate Collection',
-    subtitle: 'Artisanal truffles and handcrafted delights',
-    description: 'Experience the finest ingredients from around the world.',
-    primaryCta: { text: 'Shop Chocolates', href: '/chocolates' },
-    secondaryCta: { text: 'View Menu', href: '/menu' },
+    title: 'Cakes for All Occasions',
+    subtitle: 'Custom celebration cakes and artisan desserts',
+    description: 'From birthdays to weddings, we craft the perfect centerpiece.',
+    primaryCta: { text: 'Browse Cakes', href: '/cakes' },
+    secondaryCta: { text: 'Custom Orders', href: '/custom' },
     backgroundImage: `url('data:image/svg+xml;base64,${btoa(`
       <svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -79,11 +79,11 @@ const slides: Slide[] = [
   },
   {
     id: 3,
-    title: 'Luxury Gift Hampers',
-    subtitle: 'Curated collections for special moments',
-    description: 'Perfect gifts for every celebration and occasion.',
-    primaryCta: { text: 'Browse Hampers', href: '/hampers' },
-    secondaryCta: { text: 'Custom Orders', href: '/custom' },
+    title: 'Curated Luxury Hampers',
+    subtitle: 'Elegant gift collections for special moments',
+    description: 'Thoughtfully curated hampers for every celebration.',
+    primaryCta: { text: 'Explore Hampers', href: '/hampers' },
+    secondaryCta: { text: 'Corporate Gifting', href: '/corporate-gifting' },
     backgroundImage: `url('data:image/svg+xml;base64,${btoa(`
       <svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -166,7 +166,7 @@ export default function Hero({ className = '' }: HeroProps) {
     <section 
       className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden ${className}`}
       role="banner"
-      aria-label="Hero carousel"
+      aria-label="Hero carousel showcasing premium confections"
       style={{ width: '100%', maxWidth: '100vw' }}
     >
       {/* Carousel Container */}
